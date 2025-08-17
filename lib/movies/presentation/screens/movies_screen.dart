@@ -66,9 +66,12 @@ class MainMoviesScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(bottom: 16.0),
+                                    padding: const EdgeInsets.only(
+                                      bottom: 16.0,
+                                    ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Icon(
                                           Icons.circle,
@@ -78,17 +81,25 @@ class MainMoviesScreen extends StatelessWidget {
                                         const SizedBox(width: 4.0),
                                         Text(
                                           'Now Playing'.toUpperCase(),
-                                          style: const TextStyle(fontSize: 16.0),
+                                          style: const TextStyle(
+                                            fontSize: 16.0,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(bottom: 16.0),
+                                    padding: const EdgeInsets.only(
+                                      bottom: 16.0,
+                                    ),
                                     child: Text(
                                       item.title,
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(fontSize: 24),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -111,6 +122,7 @@ class MainMoviesScreen extends StatelessWidget {
                       fontSize: 19,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.15,
+                      color: Colors.white,
                     ),
                   ),
                   InkWell(
@@ -119,8 +131,15 @@ class MainMoviesScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: const [
-                          Text('See More'),
-                          Icon(Icons.arrow_forward_ios, size: 16.0),
+                          Text(
+                            'See More',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16.0,
+                            color: Colors.white,
+                          ),
                         ],
                       ),
                     ),
@@ -165,7 +184,8 @@ class MainMoviesScreen extends StatelessWidget {
                                   ),
                                 ),
                             errorWidget:
-                                (context, url, error) => const Icon(Icons.error),
+                                (context, url, error) =>
+                                    const Icon(Icons.error),
                           ),
                         ),
                       ),
@@ -185,6 +205,7 @@ class MainMoviesScreen extends StatelessWidget {
                       fontSize: 19,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.15,
+                      color: Colors.white,
                     ),
                   ),
                   InkWell(
@@ -193,8 +214,15 @@ class MainMoviesScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: const [
-                          Text('See More'),
-                          Icon(Icons.arrow_forward_ios, size: 16.0),
+                          Text(
+                            'See More',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16.0,
+                            color: Colors.white,
+                          ),
                         ],
                       ),
                     ),
@@ -239,7 +267,8 @@ class MainMoviesScreen extends StatelessWidget {
                                   ),
                                 ),
                             errorWidget:
-                                (context, url, error) => const Icon(Icons.error),
+                                (context, url, error) =>
+                                    const Icon(Icons.error),
                           ),
                         ),
                       ),
