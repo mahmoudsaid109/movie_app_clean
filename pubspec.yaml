@@ -18,6 +18,11 @@ dependencies:
   dartz: ^0.10.1
   flutter_bloc: ^9.1.1
   get_it: ^8.2.0
+  animate_do: ^4.2.0
+  cached_network_image: ^3.4.1
+  carousel_slider: ^5.1.1
+  google_fonts: ^6.3.0
+  shimmer: ^2.0.0
 
 dev_dependencies:
   flutter_test:
