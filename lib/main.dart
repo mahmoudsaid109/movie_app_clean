@@ -15,7 +15,7 @@ class MovieApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Movies App',
-      home: const MainMoviesScreen(),
+      home: const MoviesScreen(),
     );
   }
 }
