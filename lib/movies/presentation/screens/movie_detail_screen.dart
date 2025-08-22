@@ -3,15 +3,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:movies_app_clean/core/services/services_locator.dart';
-import 'package:movies_app_clean/movies/presentation/controller/cubit/movie_details_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../../../core/network/api_constant.dart';
-import '../../../core/utils/dummy_det.dart';
+import '../../../core/services/services_locator.dart';
+import '../../../core/utils/app_string.dart';
+
+import '../../../core/utils/enums.dart';
 import '../../domain/entities/genres.dart';
-import '../../domain/entities/movie_details.dart';
-import '../../domain/entities/recommendation.dart';
+import '../controller/cubit/movie_details_bloc.dart';
+import '../controller/cubit/movie_details_state.dart';
 
 class MovieDetailScreen extends StatelessWidget {
   final int id;
@@ -21,209 +21,250 @@ class MovieDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) =>
-              sl<MovieDetailsBloc>()
-                ..add(GetMovieDetailsEvent(id))
-                ..add(GetMovieRecommendationEvent(id)),
-      child: Scaffold(
-        body: MovieDetailContent(
-          movie: movieDetailDummy,
-          recommendations: recommendationDummy,
-        ),
+      create: (context) => sl<MovieDetailsBloc>()
+        ..add(GetMovieDetailsEvent(id))
+        ..add(GetMovieRecommendationEvent(id)),
+      lazy: false,
+      child: const Scaffold(
+        body: MovieDetailContent(),
       ),
     );
   }
 }
 
 class MovieDetailContent extends StatelessWidget {
-  final MovieDetails movie;
-  final List<Recommendation> recommendations;
-
   const MovieDetailContent({
     super.key,
-    required this.movie,
-    required this.recommendations,
   });
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      key: const Key('movieDetailScrollView'),
-      slivers: [
-        SliverAppBar(
-          pinned: true,
-          expandedHeight: 250.0,
-          flexibleSpace: FlexibleSpaceBar(
-            background: FadeIn(
-              duration: const Duration(milliseconds: 500),
-              child: ShaderMask(
-                shaderCallback: (rect) {
-                  return const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black,
-                      Colors.black,
-                      Colors.transparent,
-                    ],
-                    stops: [0.0, 0.5, 1.0, 1.0],
-                  ).createShader(
-                    Rect.fromLTRB(0.0, 0.0, rect.width, rect.height),
-                  );
-                },
-                blendMode: BlendMode.dstIn,
-                child: CachedNetworkImage(
-                  width: MediaQuery.of(context).size.width,
-                  imageUrl: ApiConstance.imageUrl(movie.backdropPath),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: FadeInUp(
-            from: 20,
-            duration: const Duration(milliseconds: 500),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    movie.title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 23,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 2.0,
-                          horizontal: 8.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[800],
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        child: Text(
-                          movie.releaseDate.split('-')[0],
-                          style: const TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w500,
+    return BlocBuilder<MovieDetailsBloc, MovieDetailsState>(
+      builder: (context, state) {
+        switch (state.movieDetailsState) {
+          case RequestState.loading:
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          case RequestState.loaded:
+            // Add null check for movieDetails
+            if (state.movieDetails == null) {
+              return const Center(
+                child: Text('Movie details not available'),
+              );
+            }
+            
+            return CustomScrollView(
+              key: const Key('movieDetailScrollView'),
+              slivers: [
+                SliverAppBar(
+                  pinned: true,
+                  expandedHeight: 250.0,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: FadeIn(
+                      duration: const Duration(milliseconds: 500),
+                      child: ShaderMask(
+                        shaderCallback: (rect) {
+                          return const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black,
+                              Colors.black,
+                              Colors.transparent,
+                            ],
+                            stops: [0.0, 0.5, 1.0, 1.0],
+                          ).createShader(
+                            Rect.fromLTRB(0.0, 0.0, rect.width, rect.height),
+                          );
+                        },
+                        blendMode: BlendMode.dstIn,
+                        child: CachedNetworkImage(
+                          width: MediaQuery.of(context).size.width,
+                          imageUrl: ApiConstance.imageUrl(
+                              state.movieDetails!.backdropPath),
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.grey[800],
+                            child: const Icon(Icons.error, size: 50),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16.0),
-                      Row(
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: FadeInUp(
+                    from: 20,
+                    duration: const Duration(milliseconds: 500),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                            size: 20.0,
+                          Text(state.movieDetails!.title,
+                              style: GoogleFonts.poppins(
+                                fontSize: 23,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.2,
+                              )),
+                          const SizedBox(height: 8.0),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 2.0,
+                                  horizontal: 8.0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[800],
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                child: Text(
+                                  _extractYear(state.movieDetails!.releaseDate),
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16.0),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 20.0,
+                                  ),
+                                  const SizedBox(width: 4.0),
+                                  Text(
+                                    (state.movieDetails!.voteAverage / 2)
+                                        .toStringAsFixed(1),
+                                    style: const TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4.0),
+                                  Text(
+                                    '(${state.movieDetails!.voteAverage.toStringAsFixed(1)})',
+                                    style: const TextStyle(
+                                      fontSize: 12.0, // Fixed font size from 1.0
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1.2,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 16.0),
+                              Text(
+                                _showDuration(state.movieDetails!.runtime),
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 4.0),
+                          const SizedBox(height: 20.0),
                           Text(
-                            (movie.voteAverage / 2).toStringAsFixed(1),
+                            state.movieDetails!.overview,
                             style: const TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(width: 4.0),
+                          const SizedBox(height: 8.0),
                           Text(
-                            '(${movie.voteAverage})',
+                            '${AppString.genres}: ${_showGenres(state.movieDetails!.genres)}',
                             style: const TextStyle(
-                              fontSize: 1.0,
+                              color: Colors.white70,
+                              fontSize: 12.0,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 1.2,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 16.0),
-                      Text(
-                        _showDuration(movie.runtime),
-                        style: const TextStyle(
-                          color: Colors.white70,
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
+                  sliver: SliverToBoxAdapter(
+                    child: FadeInUp(
+                      from: 20,
+                      duration: const Duration(milliseconds: 500),
+                      child: const Text(
+                        AppString.moreLikeThis,
+                        style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 1.2,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20.0),
-                  Text(
-                    movie.overview,
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 8.0),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 24.0),
+                  sliver: _showRecommendations(),
+                ),
+              ],
+            );
+          case RequestState.error:
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
                   Text(
-                    'Genres: ${_showGenres(movie.genres)}',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1.2,
-                    ),
+                    state.movieDetailsMessage,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
-            ),
-          ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
-          sliver: SliverToBoxAdapter(
-            child: FadeInUp(
-              from: 20,
-              duration: const Duration(milliseconds: 500),
-              child: Text(
-                'More like this'.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 1.2,
-                ),
-              ),
-            ),
-          ),
-        ),
-        // Tab(text: 'More like this'.toUpperCase()),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 24.0),
-          sliver: _showRecommendations(),
-        ),
-      ],
+            );
+        }
+      },
     );
   }
 
+  String _extractYear(String releaseDate) {
+    if (releaseDate.isEmpty) return 'N/A';
+    try {
+      return releaseDate.split('-')[0];
+    } catch (e) {
+      return 'N/A';
+    }
+  }
+
   String _showGenres(List<Genres> genres) {
+    if (genres.isEmpty) return 'N/A';
+    
     String result = '';
     for (var genre in genres) {
       result += '${genre.name}, ';
     }
 
     if (result.isEmpty) {
-      return result;
+      return 'N/A';
     }
 
     return result.substring(0, result.length - 2);
   }
 
   String _showDuration(int runtime) {
+    if (runtime <= 0) return 'N/A';
+    
     final int hours = runtime ~/ 60;
     final int minutes = runtime % 60;
 
@@ -235,42 +276,66 @@ class MovieDetailContent extends StatelessWidget {
   }
 
   Widget _showRecommendations() {
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate((context, index) {
-        final recommendation = recommendations[index];
-        return FadeInUp(
-          from: 20,
-          duration: const Duration(milliseconds: 500),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(4.0)),
-            child: CachedNetworkImage(
-              imageUrl: ApiConstance.imageUrl(recommendation.backdropPath!),
-              placeholder:
-                  (context, url) => Shimmer.fromColors(
-                    baseColor: Colors.grey[850]!,
-                    highlightColor: Colors.grey[800]!,
-                    child: Container(
-                      height: 170.0,
-                      width: 120.0,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(8.0),
+    return BlocBuilder<MovieDetailsBloc, MovieDetailsState>(
+      builder: (context, state) {
+        // Check if recommendations are available
+        if (state.recommendations.isEmpty) {
+          return const SliverToBoxAdapter(
+            child: Center(
+              child: Text(
+                'No recommendations available',
+                style: TextStyle(fontSize: 16, color: Colors.white70),
+              ),
+            ),
+          );
+        }
+
+        return SliverGrid(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final recommendation = state.recommendations[index];
+              return FadeInUp(
+                from: 20,
+                duration: const Duration(milliseconds: 500),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+                  child: CachedNetworkImage(
+                    imageUrl: ApiConstance.imageUrl(
+                        recommendation.backdropPath ?? ''),
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: Colors.grey[850]!,
+                      highlightColor: Colors.grey[800]!,
+                      child: Container(
+                        height: 170.0,
+                        width: 120.0,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
                     ),
+                    errorWidget: (context, url, error) => Container(
+                      height: 180.0,
+                      color: Colors.grey[800],
+                      child: const Icon(Icons.error, color: Colors.white54),
+                    ),
+                    height: 180.0,
+                    fit: BoxFit.cover,
                   ),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-              height: 180.0,
-              fit: BoxFit.cover,
-            ),
+                ),
+              );
+            },
+            childCount: state.recommendations.length, // Use actual recommendations length
+          ),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 8.0,
+            childAspectRatio: 0.7,
+            crossAxisCount: 3,
           ),
         );
-      }, childCount: recommendationDummy.length),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        mainAxisSpacing: 8.0,
-        crossAxisSpacing: 8.0,
-        childAspectRatio: 0.7,
-        crossAxisCount: 3,
-      ),
+      },
     );
   }
 }
+

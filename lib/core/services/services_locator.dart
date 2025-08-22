@@ -26,7 +26,7 @@ class ServicesLocator {
      sl.registerLazySingleton(() => GetMovieDetailsUseCase(sl()));
      sl.registerLazySingleton(() => GetRecommendationUsecase(sl()));
     //REPOSITORIES
-    sl.registerLazySingleton<BaseMoviesRepository>(() => MovieRepository(sl()));
+    sl.registerLazySingleton<BaseMoviesRepository>(() => MoviesRepository(sl()));
     //DATA SOURCES
     sl.registerLazySingleton<BaseMovieRemoteDataSource>(
       () => MovieRemoteDataSource(),
