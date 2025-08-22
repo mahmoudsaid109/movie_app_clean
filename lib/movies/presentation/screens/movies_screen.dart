@@ -44,7 +44,9 @@ class MoviesScreen extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                      
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(

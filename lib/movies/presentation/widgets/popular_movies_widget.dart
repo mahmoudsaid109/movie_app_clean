@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../../core/network/api_constant.dart';
 import '../../../core/utils/enums.dart';
 import '../controller/cubit/movies_state.dart';
+import '../screens/movie_detail_screen.dart';
 
 class PopularMoviesWidget extends StatelessWidget {
   const PopularMoviesWidget({super.key});
@@ -38,7 +39,16 @@ class PopularMoviesWidget extends StatelessWidget {
                     return Container(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                           Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MovieDetailScreen(
+                                id: movie.id,
+                              ),
+                            ),
+                          );
+                        },
                         child: ClipRRect(
                           borderRadius: const BorderRadius.all(
                             Radius.circular(8.0),
