@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movies_app_clean/core/services/services_locator.dart';
+import 'package:movies_app_clean/core/utils/app_string.dart';
 import 'package:movies_app_clean/movies/presentation/controller/cubit/movies_bloc.dart';
 import 'package:movies_app_clean/movies/presentation/widgets/now_playing_widget.dart';
 import '../controller/cubit/movies_events.dart';
@@ -34,7 +35,7 @@ class MoviesScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Popular",
+                      AppString.popular,
                       style: GoogleFonts.poppins(
                         fontSize: 19,
                         fontWeight: FontWeight.w500,
@@ -49,7 +50,7 @@ class MoviesScreen extends StatelessWidget {
                         child: Row(
                           children: const [
                             Text(
-                              'See More',
+                              AppString.seeMore,
                               style: TextStyle(color: Colors.white),
                             ),
                             Icon(
@@ -71,7 +72,7 @@ class MoviesScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Top Rated",
+                     AppString.topRated,
                       style: GoogleFonts.poppins(
                         fontSize: 19,
                         fontWeight: FontWeight.w500,
@@ -86,7 +87,7 @@ class MoviesScreen extends StatelessWidget {
                         child: Row(
                           children: const [
                             Text(
-                              'See More',
+                              AppString.seeMore,
                               style: TextStyle(color: Colors.white),
                             ),
                             Icon(
