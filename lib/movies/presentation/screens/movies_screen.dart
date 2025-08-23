@@ -8,6 +8,7 @@ import 'package:movies_app_clean/movies/presentation/widgets/now_playing_widget.
 import '../controller/cubit/movies_events.dart';
 import '../widgets/popular_movies_widget.dart';
 import '../widgets/top_rated_widget.dart';
+import 'see_more_screen.dart';
 
 class MoviesScreen extends StatelessWidget {
   const MoviesScreen({super.key});
@@ -45,7 +46,15 @@ class MoviesScreen extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
-                      
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SeeMoreScreen(
+                              movieType: MovieType.popular,
+                              title: AppString.popular,
+                            ),
+                          ),
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -74,7 +83,7 @@ class MoviesScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                     AppString.topRated,
+                      AppString.topRated,
                       style: GoogleFonts.poppins(
                         fontSize: 19,
                         fontWeight: FontWeight.w500,
@@ -83,7 +92,17 @@ class MoviesScreen extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SeeMoreScreen(
+                              movieType: MovieType.topRated,
+                              title: AppString.topRated,
+                            ),
+                          ),
+                        );
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
