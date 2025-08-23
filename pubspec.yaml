@@ -24,6 +24,7 @@ dependencies:
   google_fonts: ^6.3.0
   shimmer: ^2.0.0
   connectivity_plus: ^6.1.5
+  video_player: ^2.9.2
   
 
 dev_dependencies:

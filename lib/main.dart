@@ -3,7 +3,7 @@ import 'package:movies_app_clean/core/network/connectivty_services.dart';
 import 'package:movies_app_clean/core/services/services_locator.dart';
 import 'core/network/connectivty_wrapper.dart';
 import 'core/utils/app_string.dart';
-import 'movies/presentation/screens/movies_screen.dart';
+import 'core/presentation/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ class MovieApp extends StatelessWidget {
       builder: (context, child) {
         return ConnectivityWrapper(child: child ?? Container());
       },
-      home: const MoviesScreen(),
+      home: const SplashScreen(),
     );
   }
 }
