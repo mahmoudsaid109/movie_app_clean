@@ -28,7 +28,7 @@ class PopularMoviesWidget extends StatelessWidget {
             return FadeIn(
               duration: const Duration(milliseconds: 500),
               child: SizedBox(
-                height: 170.0,
+                height: 200.0,
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
@@ -40,29 +40,32 @@ class PopularMoviesWidget extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 8.0),
                       child: InkWell(
                         onTap: () {
-                           Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MovieDetailScreen(
-                                id: movie.id,
-                              ),
+                              builder: (context) =>
+                                  MovieDetailScreen(id: movie.id),
                             ),
                           );
                         },
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(8.0),
-                          ),
-                          child: CachedNetworkImage(
-                            width: 120.0,
-                            fit: BoxFit.cover,
-                            imageUrl: ApiConstance.imageUrl(movie.backdropPath),
-                            placeholder:
-                                (context, url) => Shimmer.fromColors(
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8.0),
+                              ),
+                              child: CachedNetworkImage(
+                                width: 120.0,
+                                height: 150.0,
+                                fit: BoxFit.cover,
+                                imageUrl:
+                                    ApiConstance.imageUrl(movie.backdropPath),
+                                placeholder: (context, url) =>
+                                    Shimmer.fromColors(
                                   baseColor: Colors.grey[850]!,
                                   highlightColor: Colors.grey[800]!,
                                   child: Container(
-                                    height: 170.0,
+                                    height: 150.0,
                                     width: 120.0,
                                     decoration: BoxDecoration(
                                       color: Colors.black,
@@ -70,10 +73,20 @@ class PopularMoviesWidget extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                            errorWidget:
-                                (context, url, error) =>
+                                errorWidget: (context, url, error) =>
                                     const Icon(Icons.error),
-                          ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                            Text(
+                              movie.releaseDate.split('-')[0],
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
