@@ -122,7 +122,7 @@ class MovieDetailContent extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                                 child: Text(
-                                  _extractYear(state.movieDetails!.releaseDate),
+                                  state.movieDetails!.releaseDate.split('-')[0],
                                   style: const TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w500,
@@ -238,14 +238,6 @@ class MovieDetailContent extends StatelessWidget {
     );
   }
 
-  String _extractYear(String releaseDate) {
-    if (releaseDate.isEmpty) return 'N/A';
-    try {
-      return releaseDate.split('-')[0];
-    } catch (e) {
-      return 'N/A';
-    }
-  }
 
   String _showGenres(List<Genres> genres) {
     if (genres.isEmpty) return 'N/A';
